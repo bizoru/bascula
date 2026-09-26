@@ -44,7 +44,7 @@ jobs:
     outputs:
       key: ${{ steps.key.outputs.key }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - id: key
         name: Source key
@@ -74,14 +74,14 @@ jobs:
           fi
 
       - if: steps.exists.outputs.hit != 'true'
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
 
       # BuildKit cache mounts (Go module + build cache, npm cache) live inside
       # the builder, which is new on every runner. Carry them in the Actions
       # cache so a code change recompiles only what it touched.
       - if: steps.exists.outputs.hit != 'true'
         id: mounts
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: buildkit-mounts
           key: mounts-${{ inputs.component }}-${{ hashFiles('services/api/go.sum', 'package-lock.json') }}-${{ github.run_id }}
@@ -90,14 +90,14 @@ jobs:
             mounts-${{ inputs.component }}-
 
       - if: steps.exists.outputs.hit != 'true'
-        uses: reproducible-containers/buildkit-cache-dance@v3
+        uses: reproducible-containers/buildkit-cache-dance@5422eac04292c961a382e0f584ea0f03ad9da723 # v3
         with:
           cache-dir: buildkit-mounts
           dockerfile: ${{ inputs.component == 'api' && 'services/api/Dockerfile' || 'apps/web/Dockerfile' }}
 
       - if: steps.exists.outputs.hit != 'true'
         name: Build and push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
         with:
           # The web imports @bascula/shared through the npm workspace, so its
           # context is the repo root (root lockfile and packages/).
